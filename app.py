@@ -38,8 +38,7 @@ def process(df):
     df.loc[df['need validation'] == True , 'System_Status'] = 'Need_validation'
     df.loc[df['isduplicate'] == True , 'System_Status'] = 'Duplicate'
 
-    df_processed = process(df)
-    return df_processed
+    return df
 
 def main():
     st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
@@ -50,10 +49,12 @@ def main():
     if uploaded_file is not None:
         try:
             # Read the Excel file
-            df = pd.read_excel(uploaded_file)
+            data = pd.read_excel(uploaded_file)
         except pd.errors.ParserError:
             handle_errors()
             return
+
+    df_processed = process(data)
     
     st.subheader("View Processed Data")
     st.write(df_processed)
