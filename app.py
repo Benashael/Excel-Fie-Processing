@@ -39,7 +39,7 @@ def process(df):
     df.loc[df['isduplicate'] == True , 'System_Status'] = 'Duplicate'
 
     columns_to_drop = ['isduplicate', 'need validation', 'verified']
-    df.drop(columns=columns_to_drop)
+    df = df.drop(columns=columns_to_drop)
     return df
 
 st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
