@@ -50,8 +50,8 @@ if uploaded_file is not None:
         # Read the Excel file
         data = pd.read_excel(uploaded_file)
     except pd.errors.ParserError:
-        handle_errors()
-        return
+        st.error("The uploaded dataset is not in a valid format.")
+        data = none
 
 df_processed = process(data)
 
