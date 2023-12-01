@@ -50,7 +50,7 @@ if uploaded_file is not None:
         # Read the Excel file
         data = pd.read_excel(uploaded_file)
         
-        data = df st.subheader("View Original Data") 
+        st.subheader("View Original Data") 
         st.write(data)
         
         df_processed = process(data)
