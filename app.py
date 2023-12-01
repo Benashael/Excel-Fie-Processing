@@ -4,7 +4,6 @@ import base64
 import openpyxl
 import io
 
-@st.cache_resource
 def process(df):
     needval_condition = df.duplicated(subset=['Udise', 'Action Item'], keep=False) & (
       df.groupby(['Udise', 'Action Item'])['quantity'].transform('nunique') > 1
