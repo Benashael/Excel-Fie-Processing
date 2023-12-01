@@ -53,17 +53,13 @@ def main():
         except pd.errors.ParserError:
             handle_errors()
             return
-    
-    data = df
-    
-    st.subheader("Original Data")
-    st.write(data)
 
     df_processed = process(df)
   
-    st.subheader("Processed Data")
+    st.subheader("View Processed Data")
     st.write(df_processed)
 
+    st.subheader("Download Processed Data")
     excel_buffer = io.BytesIO()
     df_processed.to_excel(excel_buffer, index=False, header=True)
     excel_buffer.seek(0)
