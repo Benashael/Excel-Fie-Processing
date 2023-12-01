@@ -37,8 +37,9 @@ def process(df):
     df.loc[df['verified'] == True , 'System_Status'] = 'Verified'
     df.loc[df['need validation'] == True , 'System_Status'] = 'Need_validation'
     df.loc[df['isduplicate'] == True , 'System_Status'] = 'Duplicate'
-  
-    return df
+
+    df_processed = process(df)
+    return df_processed
 
 def main():
     st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
@@ -53,9 +54,7 @@ def main():
         except pd.errors.ParserError:
             handle_errors()
             return
-
-    df_processed = process(df)
-  
+    
     st.subheader("View Processed Data")
     st.write(df_processed)
 
