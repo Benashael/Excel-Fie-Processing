@@ -39,8 +39,8 @@ def process(df):
     df.loc[df['isduplicate'] == True , 'System_Status'] = 'Duplicate'
 
     columns_to_drop = ['isduplicate', 'need validation', 'verified']
-    df = df.drop(columns=columns_to_drop)
-    return df
+    new_df = df.drop(columns=columns_to_drop)
+    return new_df
 
 st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
 
