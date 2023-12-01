@@ -49,22 +49,27 @@ if uploaded_file is not None:
     try:
         # Read the Excel file
         data = pd.read_excel(uploaded_file)
-        
-        st.subheader("View Original Data") 
-        st.write(data)
-        
-        df_processed = process(data)
 
-        st.subheader("View Processed Data")
-        st.write(df_processed)
-        
-        st.subheader("Download Processed Data")
-        excel_buffer = io.BytesIO()
-        df_processed.to_excel(excel_buffer, index=False, header=True)
-        excel_buffer.seek(0)
-        b64 = base64.b64encode(excel_buffer.read()).decode()
-        href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="processed_data.xlsx">Click here to download Processed Data</a>'
-        st.markdown(href, unsafe_allow_html=True)
+        required_columns = ['Udise', 'Action Item', 'quantity']
+        if not all(column in data.columns for column in required_columns):
+            st.error(f"The uploaded dataset must contain the following columns: {', '.join(required_columns)}")
+
+        else:
+            st.subheader("View Original Data") 
+            st.write(data)
+            
+            df_processed = process(data)
+    
+            st.subheader("View Processed Data")
+            st.write(df_processed)
+            
+            st.subheader("Download Processed Data")
+            excel_buffer = io.BytesIO()
+            df_processed.to_excel(excel_buffer, index=False, header=True)
+            excel_buffer.seek(0)
+            b64 = base64.b64encode(excel_buffer.read()).decode()
+            href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="processed_data.xlsx">Click here to download Processed Data</a>'
+            st.markdown(href, unsafe_allow_html=True)
         
     except pd.errors.ParserError:
         st.error("The uploaded dataset is not in a valid format.")
