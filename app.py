@@ -54,8 +54,10 @@ def main():
             handle_errors()
             return
     
+    data = df
+    
     st.subheader("Original Data")
-    st.write(df)
+    st.write(data)
 
     df_processed = process(df)
   
