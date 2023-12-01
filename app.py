@@ -40,32 +40,30 @@ def process(df):
 
     return df
 
-def main():
-    st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
+st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
 
-    st.header("Excel Data Processing App 📊")
-    uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
-    
-    if uploaded_file is not None:
-        try:
-            # Read the Excel file
-            data = pd.read_excel(uploaded_file)
-        except pd.errors.ParserError:
-            handle_errors()
-            return
+st.header("Excel Data Processing App 📊")
+uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
 
-    df_processed = process(data)
-    
-    st.subheader("View Processed Data")
-    st.write(df_processed)
+if uploaded_file is not None:
+    try:
+        # Read the Excel file
+        data = pd.read_excel(uploaded_file)
+    except pd.errors.ParserError:
+        handle_errors()
+        return
 
-    st.subheader("Download Processed Data")
-    excel_buffer = io.BytesIO()
-    df_processed.to_excel(excel_buffer, index=False, header=True)
-    excel_buffer.seek(0)
-    b64 = base64.b64encode(excel_buffer.read()).decode()
-    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="processed_data.xlsx">Click here to download Processed Data</a>'
-    st.markdown(href, unsafe_allow_html=True)
+df_processed = process(data)
 
-if __name__ == "__main__":
-    main()
+st.subheader("View Processed Data")
+st.write(df_processed)
+
+st.subheader("Download Processed Data")
+excel_buffer = io.BytesIO()
+df_processed.to_excel(excel_buffer, index=False, header=True)
+excel_buffer.seek(0)
+b64 = base64.b64encode(excel_buffer.read()).decode()
+href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="processed_data.xlsx">Click here to download Processed Data</a>'
+st.markdown(href, unsafe_allow_html=True)
+
+
