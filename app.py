@@ -178,7 +178,7 @@ st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
 st.title("Excel Data Processing App 📊")
 uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx", "xls"])
 
-page = st.sidebar.radio("**Select a Page**",["Algorithm without Enhancement", "Algorithm with Enhancement based on Action Item"])
+page = st.sidebar.radio("**Select a Page**",["Algorithm with Enhancement based on Action Item", "Algorithm without Enhancement"])
 
 if page == "Algorithm without Enhancement":
 
