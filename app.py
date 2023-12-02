@@ -4,6 +4,7 @@ import base64
 import openpyxl
 import io
 
+@st.cache_resource
 def process(df):
     needval_condition = df.duplicated(subset=['Udise', 'Action Item'], keep=False) & (
       df.groupby(['Udise', 'Action Item'])['quantity'].transform('nunique') > 1
@@ -42,6 +43,7 @@ def process(df):
     new_df = df.drop(columns=columns_to_drop)
     return new_df
 
+@st.cache_resource
 def enhanced_process(df):
     action_items_list =  [
     'சுவரில் நீர் ஒழுகுதல் பழுதுப்பார்த்தல்',
