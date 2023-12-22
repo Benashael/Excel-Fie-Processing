@@ -46,129 +46,197 @@ def process(df):
 @st.cache_resource
 def enhanced_process(df):
     action_items_list =  [
-    'சுவரில் நீர் ஒழுகுதல் பழுதுப்பார்த்தல்',
-    'சுற்றுச்சுவர் பழுதுப்பார்த்தல்',
-    'தரை சீரமைப்பு செய்தல்',
-    'தரைத் தள ஓடு பதித்தல்',
-    'பட்டி பார்த்தல்',
-    'பழுதடைந்த சுற்றுச்சுவரை அகற்றுதல்',
-    'பழுதுப்பார்த்தல்',
-    'புதிய இயற்பியல் ஆய்வகம்',
-    'புதிய உடற்கல்வி ஆசிரியர்அறை',
-    'புதிய உயர்-தொழிநுட்ப ஆய்வகம்',
-    'புதிய உயிரியல் ஆய்வகம்',
-    'புதிய ஒருங்கிணைந்த அறிவியல் ஆய்வகம்',
-    'புதிய கணித ஆய்வகம்',
-    'புதிய கணினி ஆய்வகம்',
-    'புதிய கலை ஆய்வகம்',
-    'புதிய கலையரங்கம்',
-    'புதிய கழிவுநீர்த் தேக்கத் தொட்டி',
-    'புதிய சமையலறை',
-    'புதிய சமையல் அறை',
-    'புதிய சுற்றுச் சுவர்',
-    'புதிய சேமிப்பு அறை',
-    'புதிய சேலபாட்டு அறை',
-    'புதிய நிருவாக அலுவலக அறை',
-    'புதிய நிலத்தடித் தொட்டி',
-    'புதிய நூலகம்',
-    'புதிய பதிவறை',
-    'புதிய பம்ப் அறை',
-    'புதிய பாதுகாப்பாளர் அறை',
-    'புதிய வேதியியல் ஆய்வகம்',
-    'மேற்கூரை பூசுதல்',
-    'மேற்பூசசு பூசுதல்'
+    "சுற்றுச்சுவர் பழுதுப்பார்த்தல்",
+    "பழுதடைந்த சுற்றுச்சுவரை அகற்றுதல்",
+    "புதிய இயற்பியல் ஆய்வகம்",
+    "புதிய உடற்கல்வி ஆசிரியர் அறை",
+    "புதிய உயர்-தொழிநுட்ப ஆய்வகம்",
+    "புதிய உயிரியல் ஆய்வகம்",
+    "புதிய கணித ஆய்வகம்",
+    "புதிய கணினி ஆய்வகம்",
+    "புதிய கலை ஆய்வகம்",
+    "புதிய சமையல் அறை",
+    "புதிய கலையரங்கம்",
+    "புதிய கழிவுநீர்த் தேக்கத் தொட்டி",
+    "புதிய சமையலறை",
+    "புதிய சுற்றுச் சுவர்",
+    "புதிய சேமிப்பு அறை",
+    "புதிய சேலபாட்டு அறை",
+    "புதிய நிருவாக அலுவலக அறை",
+    "புதிய நிலத்தடித் தொட்டி",
+    "புதிய நூலகம்",
+    "புதிய பதிவறை",
+    "புதிய பம்ப் அறை",
+    "புதிய பாதுகாப்பாளர் அறை",
+    "புதிய வேதியியல் ஆய்வகம்",
     ]
 
-    needval_condition = df.duplicated(subset=['Udise', 'Action Item'], keep=False) & (
-    df.groupby(['Udise', 'Action Item'])['quantity'].transform('nunique') > 1
-    )
-    dupli_condition = df.duplicated(subset=['Udise', 'Action Item'], keep=False) & (
-        df.groupby(['Udise', 'Action Item'])['quantity'].transform(lambda x: (x == 0)  | (x > 30))) | (df.duplicated(subset=['Udise', 'Action Item', 'quantity'], keep='first')
-    )
-    dup_zero = df.duplicated(subset=['Udise', 'Action Item']) & (
-        df.groupby(['Udise', 'Action Item'])['quantity'].transform(lambda x: all((x == 0)  | (x > 30))))
-    
-    veri_one = df.duplicated(subset=['Udise', 'Action Item']) & (
-        df.groupby(['Udise', 'Action Item'])['quantity'].transform(lambda x: (x == 1))) & (
-        df.groupby(['Udise', 'Action Item'])['Action Item'].transform(lambda x: x.isin(action_items_list)))
-    
-    veri_many = df.duplicated(subset=['Udise', 'Action Item']) & (
-        df.groupby(['Udise', 'Action Item'])['quantity'].transform(lambda x: (x > 1))) & (
-        df.groupby(['Udise', 'Action Item'])['Action Item'].transform(lambda x: x.isin(action_items_list)))
-    
-    df['verified'] = [False]*len(df)
-    df['need validation'] = [False]*len(df)
-    df['isduplicate'] = [False]*len(df)
-    df.loc[dupli_condition, 'isduplicate'] = True
-    df.loc[dup_zero, 'isduplicate'] = False
-    
-    need_val = []
-    for i in df['quantity']:
-      if i > 30 or i == 0 :
-        need_val.append(True)
-      else:
-        need_val.append(False)
-    
-    df['need validation'] = need_val
-    df.loc[needval_condition, 'need validation'] = True
-    
-    df['verified'] = ''
-    df.loc[df['isduplicate'] == False , 'verified'] = True
-    df.loc[df['need validation'] == False , 'verified'] = True
-    
-    df.loc[veri_one, 'verified'] = True
-    df.loc[veri_one, 'need validation'] = False
-    
-    df.loc[veri_many, 'verified'] = False
-    df.loc[veri_many, 'need validation'] = True
-    
-    df['System_Status'] = ''
-    df.loc[df['verified'] == True , 'System_Status'] = 'Verified'
-    df.loc[df['need validation'] == True , 'System_Status'] = 'Need_validation'
-    df.loc[df['isduplicate'] == True , 'System_Status'] = 'Duplicate'
-
-    def create_duplicates(df, action_item, index):
-        return (
-            df.duplicated(subset=['Udise', 'Action Item']) & (
-                df.groupby(['Udise', 'Action Item', 'quantity'])['quantity'].transform(lambda x: (x != 0) & (x > 1)) & (
-                    df.groupby(['Udise'])['Action Item'].transform(lambda x: x == action_item)
-                )
-            )
-        )
-    
-    df = df.sort_values(by = 'quantity')
-    for i, action_item in enumerate(action_items_list, start=1):
-        dup_var = f"dup_{i}"
-        dup_condition = create_duplicates(df, action_item, i)
-        df.loc[dup_condition, 'System_Status'] = 'Duplicate'
-
-    def update_status(df, action_item):
-        mixed_groups = df.groupby(['Udise', 'Action Item'])
-
-        for name, group in mixed_groups:
-            if name[1] == action_item:
-                zero_exists = (group['quantity'] == 0).any()
-                ten_exists = (group['quantity'] > 1).any()
-    
-                if zero_exists and ten_exists:
-                    zero_idx = group[group['quantity'] == 0].index
-                    df.loc[zero_idx, 'System_Status'] = 'Need_validation'
-
-    for action_item in action_items_list:
-        update_status(df, action_item)
-
-    # Find single entries for each Udise-Action Item combination
     single_entries = df.groupby(['Udise', 'Action Item']).filter(lambda x: len(x) == 1)
+
+    single_entries_index_zero30 = single_entries[
+        (single_entries['quantity'] == 0) |
+        (single_entries['quantity'] > 30)
+        ].index
     
-    # Locate the index of those single entries with 'Verified' status and quantity greater than 1
-    single_entries_index = single_entries[
-        (single_entries['System_Status'] == 'Verified') &
-        (single_entries['quantity'] > 1) & (single_entries['quantity'] != 0)
+    df.loc[single_entries_index_zero30, 'System_Status'] = 'Need validation'
+    
+    single_entries_index_nonlist_verified = single_entries[
+        (single_entries['quantity'] > 0) & (single_entries['quantity'] < 30) &  ~single_entries['Action Item'].isin(action_items_list)
     ].index
     
-    # Update the 'System_Status' for those single entries to 'Need_validation'
-    df.loc[single_entries_index, 'System_Status'] = 'Need_validation'
+    df.loc[single_entries_index_nonlist_verified, 'System_Status'] = 'Verified'
+    
+    single_entries_index_inlist_verified = single_entries[
+        (single_entries['quantity'] == 1) &  single_entries['Action Item'].isin(action_items_list)
+    ].index
+    
+    df.loc[single_entries_index_inlist_verified, 'System_Status'] = 'Verified'
+    
+    single_entries_index_inlist_needval = single_entries[
+        (single_entries['quantity'] > 1) &  single_entries['Action Item'].isin(action_items_list)
+    ].index
+    
+    df.loc[single_entries_index_inlist_needval, 'System_Status'] = 'Need Validation'
 
+    grouped_entries = df.groupby(['Udise', 'Action Item']).filter(lambda x: len(x) > 1)
+
+    grouped_entries_index_nonlist_verified = grouped_entries[
+        (grouped_entries['quantity'] > 0) & (grouped_entries['quantity'] < 30) &  ~grouped_entries['Action Item'].isin(action_items_list)
+    ].index
+    
+    df.loc[grouped_entries_index_nonlist_verified, 'System_Status'] = 'Verified'
+    
+    grouped_entries_index_inlist_verified = grouped_entries[
+        (grouped_entries['quantity'] == 1) &  grouped_entries['Action Item'].isin(action_items_list)
+    ].index
+    
+    df.loc[grouped_entries_index_inlist_verified, 'System_Status'] = 'Verified'
+    
+    needval_condition = (
+        df.duplicated(subset=['Udise', 'Action Item'], keep=False) &
+        (df.groupby(['Udise', 'Action Item'])['quantity'].transform('nunique') > 1)
+    
+    )
+    
+    df.loc[needval_condition, 'System_Status'] = 'Need validation'
+    
+    dupli_condition = df.duplicated(subset=['Udise', 'Action Item','quantity'],  keep='first')
+    
+    df.loc[dupli_condition, 'System_Status'] = 'Duplicate'
+    
+    grouped_entries_index_inlist_duplicate = grouped_entries[
+        (grouped_entries['quantity'] > 1) &  grouped_entries['Action Item'].isin(action_items_list)
+    ].index
+    
+    df.loc[grouped_entries_index_inlist_duplicate, 'System_Status'] = 'Duplicate'
+    
+    grouped_entries_index_zero30 = grouped_entries[
+        (grouped_entries['quantity'] == 0) |
+        (grouped_entries['quantity'] > 30)
+        ].index
+    
+    df.loc[grouped_entries_index_zero30, 'System_Status'] = 'Duplicate'
+    
+    df = df.sort_values(['quantity'])
+    def update_status(df, action_item):
+        if df.empty:
+            return
+        mixed_groups = df.groupby(['Udise', 'Action Item'])
+    
+        for name, group in mixed_groups:
+            if name[1] in action_items_list and len(group) > 1:  #name[1] == action_item and
+                zero_exists = (group['quantity'] == 0).any()
+                greater30_exists = (group['quantity'] > 30).any()
+    
+                if zero_exists or greater30_exists:
+                    non_zero_group = group[group['quantity'] != 0]
+                    zero_group = group[group['quantity'] == 0]
+    
+                    if not non_zero_group.empty:
+                        min_quantity_index = non_zero_group['quantity'].idxmin()
+                        if df.loc[min_quantity_index, 'quantity'] > 1:
+                            #print("nozer",min_quantity_index)
+                            df.loc[min_quantity_index, 'System_Status'] = 'Need validation'
+                        elif df.loc[min_quantity_index, 'quantity'] == 1:
+                          #print("one",min_quantity_index)
+                          df.loc[min_quantity_index, 'System_Status'] = 'Verified'
+    
+            if name[1] not in action_items_list and ((group['quantity'] == 0).all() or (group['quantity'] > 30).all()):
+                    if not group.empty  :
+                        min_quantity_index = group['quantity'].idxmin()
+                        # print("what?")
+                        if df.loc[min_quantity_index, 'quantity'] > 1:
+                            # print("nozer",min_quantity_index)
+                            df.loc[min_quantity_index, 'System_Status'] = 'Need validation'
+    
+            #if name[1] in action_items_list and len(group) > 1 and (group['quantity'] == 1).sum() == 1 and (group['quantity'] != 0).any() and (group['quantity'] < 30).any() :
+            #  qualifying_rows = group[group['quantity'] == 1]
+            #  if not qualifying_rows.empty:
+            #        index_with_one = qualifying_rows.index[0]
+            #        print("one 1", index_with_one)
+            #        df.loc[index_with_one, 'System_Status'] = 'Need validation'
+    
+            if name[1] not in action_items_list and len(group) > 1 and (group['quantity'] > 1).any() and ((group['quantity'] == 0).any() or (group['quantity'] > 30).any()) :
+              qualifying_rows = group[(group['quantity'] > 1)]
+              unique_values_in_range = group[(group['quantity'] >= 0) & (group['quantity'] <= 30)]['quantity'].drop_duplicates().tolist()
+              if not len(unique_values_in_range) == 0:
+    
+                            unique_value_index = group[(group['quantity'] >= 0) & (group['quantity'] <= 30) & (group['quantity'].isin(unique_values_in_range))].index[0]
+                            if len(unique_values_in_range) == 1:
+    
+                                # print("veri",unique_value_index)
+                                df.loc[unique_value_index, 'System_Status'] = 'Verified'
+                    #if ( ((group['quantity'] > 0) & (group['quantity'] < 30)).sum() == 1):
+                    #  filtered_group = group[(group['quantity'] > 0) & (group['quantity'] < 30)]
+                    ##  if not filtered_group.empty and len(filtered_group) == 1:
+                    #      index_value = filtered_group.index[0]
+                    #      print("veri man:",index_with_more_one )
+                    #      df.loc[index_with_more_one, 'System_Status'] = 'Verified'
+                        #index_with_more_one = group[(group['quantity'] > 1) & (group['quantity'] != 0) & (group['quantity'] > 30)].index[0]
+                        #print("ver man", index_with_more_one)
+                        #df.loc[index_with_more_one, 'System_Status'] = 'Verified'
+    
+    # Assuming action_items_list is defined somewhere
+    for action_item in action_items_list:
+        update_status(df, action_item)
+    
+    # Filter groups where there's a mix of values within range [0, 30] along with zero
+    mixed_value_groups = df.groupby(['Udise', 'Action Item']).filter(
+        lambda group: ((group['quantity'].between(0, 31)).sum() > 0) and (group['quantity'].isin([0, 30])).any()
+    )
+    
+    # Iterate through these groups to identify unique values within the range [1, 30] and mark them as 'Verified'
+    for group_index, group in mixed_value_groups.groupby(['Udise', 'Action Item']):
+        unique_values_in_range = group.loc[group['quantity'].between(0,31), 'quantity'].drop_duplicates()
+        if len(unique_values_in_range) == 1:
+            unique_value_index = unique_values_in_range.index[0]
+            #print(unique_values_in_range)
+            df.loc[unique_value_index, 'System_Status'] = 'Verified'
+
+    # Filter groups where all values consist of 0 and values greater than 30
+    special_groups = df.groupby(['Udise', 'Action Item']).filter(
+        lambda group: (group['quantity'].eq(0) | group['quantity'].gt(30)).all()
+    )
+    
+    # Iterate through these groups and mark them as 'Special'
+    for group_index, group in special_groups.groupby(['Udise', 'Action Item']):
+        first_index = group.index[0]
+        #print(first_index)
+        df.loc[first_index, 'System_Status'] = 'Need validation'
+
+    same_value_groups = df.groupby(['Udise', 'Action Item'])['quantity'].transform(lambda group: group.nunique() == 1)
+
+    # Iterate through these groups and mark the first index in each group as 'Need validation'
+    for group_index, group in df[same_value_groups].groupby(['Udise', 'Action Item']):
+        action_item_value = group['Action Item'].iloc[0]
+    
+        if action_item_value in action_items_list and ~(group['quantity'] == 1).any():
+            first_index = group.index[0]
+            df.loc[first_index, 'System_Status'] = 'Need validation'
+        # elif action_item_value not in action_items_list:
+        #     first_index = group.index[0]
+        #     df.loc[first_index, 'System_Status'] = 'Need validation'
+    
     columns_to_drop = ['isduplicate', 'need validation', 'verified']
     new_df = df.drop(columns=columns_to_drop)
     return new_df
