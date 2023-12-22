@@ -237,9 +237,7 @@ def enhanced_process(df):
         #     first_index = group.index[0]
         #     df.loc[first_index, 'System_Status'] = 'Need validation'
     
-    columns_to_drop = ['isduplicate', 'need validation', 'verified']
-    new_df = df.drop(columns=columns_to_drop)
-    return new_df
+    return df
 
 st.set_page_config(page_title="Excel Data Processing App", page_icon="📊")
 
